@@ -16,13 +16,13 @@ export const openAi = {
         const response = await openAiApi.createChatCompletion({
             model: "gpt-3.5-turbo",
             temperature: 0.6,
-            messages
+            messages: [ messages ]
         });
 
         return response;
     },
     createTemplate: (role, content) => {
         if (!role || !content) throw new Error("Parâmetros necessários: role e content");
-        return { role, content };
+        return { role, content: content };
     }
 }
