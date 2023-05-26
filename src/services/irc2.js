@@ -1,6 +1,6 @@
 import ircClient from "node-irc";
 import dotenv from "dotenv";
-import { captureInfoCav, infoFight, receiveAttacks, startFight } from "../core/controllers.js";
+import { captureCosmoCommand, captureInfoCav, infoFight, receiveAttacks, startFight } from "../core/controllers.js";
 
 dotenv.config();
 
@@ -22,12 +22,16 @@ clientIrc.on('CHANMSG', function (data) {
             startFight(data.message);
         }
     }
+
+    if (infoFight.enableCommands && data.sender === process.env.IRC_NICK_CDZFOREVER) {
+        captureCosmoCommand(data.message);
+    }
 });
 
 clientIrc.on('PRIVMSG', function (data) {
     const nick = data.sender;
     const message = data.message;
-    
+
     if (nick === process.env.IRC_NICK_CDZFOREVER && message.includes("Cosmo" && "Armadura")) {
         captureInfoCav(message);
     }
