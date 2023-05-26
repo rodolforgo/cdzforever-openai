@@ -1,6 +1,6 @@
 import ircClient from "node-irc";
 import dotenv from "dotenv";
-import { captureInfoCav, infoFight, receiveAttacks, startFight } from "../entities/actions.js";
+import { captureInfoCav, infoFight, receiveAttacks, startFight } from "../core/controllers.js";
 
 dotenv.config();
 

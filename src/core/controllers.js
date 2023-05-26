@@ -1,5 +1,6 @@
 import { clientIrc } from "../services/irc2.js";
-import { Cav, Fight } from "./createFightContextMessage.js";
+import { openAi } from "../services/openAi.js";
+import { Cav, Fight } from "./entities.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -19,7 +20,8 @@ export function startFight(msg) {
         const nickB = nicks[2];
         infoFight.nicks.push(nickA, nickB);
 
-        clientIrc.say(process.env.IRC_CHANNEL, `Início de luta entre: ${nickA} e ${nickB}`);
+        clientIrc.say(process.env.IRC_CHANNEL, `Iniciando luta entre: ${nickA} e ${nickB}.`);
+        clientIrc.say(process.env.IRC_CHANNEL, `Enviem seus dados digitando @Enviar ${process.env.IRC_NICK}`);
 
         infoFight.status = true;
     }
@@ -28,7 +30,7 @@ export function startFight(msg) {
 export function captureInfoCav(msg) {
     const nick = msg.split(" ")[2];
 
-    if (infoFight.cavs[0]?.nick === nick || infoFight.cavs[1]?.nick === nick) return;
+    // if (infoFight.cavs[0]?.nick === nick || infoFight.cavs[1]?.nick === nick) return;
 
     if (infoFight.nicks.includes(nick) && infoFight.cavs.length <= 1) {
         const cosmoSearch = msg.search("Cosmo");
@@ -60,12 +62,37 @@ export function receiveAttacks(nick, msg) {
     createFightInOpenAi();
 }
 
-export function createFightInOpenAi() {
+export async function createFightInOpenAi() {
     if (infoFight.cavs[0].acao.length && infoFight.cavs[1].acao.length) {
         const fight = new Fight(infoFight.cavs[0], infoFight.cavs[1], "Santuário");
 
         clientIrc.say(process.env.IRC_CHANNEL, `Gerando contexto de narração...`);
-        console.log(fight.createFightContextMessage());
+
+        const fightContext = openAi.createTemplate("user", fight.createFightContextMessage());
+
+        try {
+            clientIrc.say(process.env.IRC_CHANNEL, `Narração em produção...`);
+            const narration = await openAi.generate(fightContext);
+
+            narration.data.choices.forEach((item) => {
+                const separateMessage = item.message.content.match(/.{1,400}/g);
+                separateMessage.forEach(msg => clientIrc.say(process.env.IRC_CHANNEL, msg));
+            });
+
+            finishFight();
+        } catch (err) {
+            console.log(err)
+        }
+    }
+}
+
+function finishFight() {
+    if (infoFight.status) {
+        infoFight.status = false;
+        infoFight.nicks = [];
+        infoFight.receiveAttacks = false;
+        infoFight.cavs = [];
+        clientIrc.say(process.env.IRC_CHANNEL, `Luta finalizada com sucesso!`);
     }
 }
 
