@@ -1,0 +1,20 @@
+{
+  "name": "cdzforever-openai",
+  "version": "1.0.0",
+  "description": "Narração de lutas CDZ via OpenAI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "author": "José Rodolfo",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "node-irc": "^0.0.5",
+    "openai": "^3.2.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3"
+  }
+}
