@@ -23,6 +23,6 @@ export const openAi = {
     },
     createTemplate: (role, content) => {
         if (!role || !content) throw new Error("Parâmetros necessários: role e content");
-        return { role, content: content };
+        return { role, content };
     }
 }
