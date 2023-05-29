@@ -20,13 +20,12 @@ export class Fight {
         O local da luta é ${this.local}.
         
         O primeiro chama-se ${this.cavA.nick} e possui ${this.cavA.cosmo} de quantidade de cosmo.
-        O segundo chama-se ${this.cavB.nick} e possui ${this.cavB.cosmo} de cosmo.
+        O segundo chama-se ${this.cavB.nick} e possui ${this.cavB.cosmo} de quantidade de cosmo.
         
         Movimentação de ${this.cavA.nick}: ${this.cavA.acao} 
         Movimentação de ${this.cavB.nick}: ${this.cavB.acao}
         `;
     }
-
 }
 
 
